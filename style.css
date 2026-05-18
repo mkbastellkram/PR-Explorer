@@ -59,3 +59,19 @@ html,body{background:radial-gradient(circle at 20% 0%,rgba(50,126,91,.40),transp
 .traffic.open i:nth-child(1),.traffic.limited i:nth-child(2),.traffic.closed i:nth-child(3){opacity:1}.traffic.unknown i:nth-child(1){opacity:1}.traffic{display:inline-flex;gap:3px;vertical-align:middle;margin-left:5px}.traffic i{width:7px;height:7px;border-radius:50%;opacity:.25}.traffic i:nth-child(1){background:#27c46a}.traffic i:nth-child(2){background:#f5b942}.traffic i:nth-child(3){background:#ef4444}
 .noteLabel{display:block;margin:14px 0 7px;color:rgba(238,248,241,.68);font-size:12px;text-transform:uppercase;letter-spacing:.09em}.noteBox{width:100%;min-height:96px;border-radius:18px;padding:12px 14px;resize:vertical;line-height:1.35}.factorField{display:block;margin:10px 0}.factorField input{width:100%;border-radius:18px;padding:13px 14px;font-size:17px}
 @media(max-width:560px){.cardTools{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}.hero h1{font-size:38px}.sectionTitle h2{font-size:28px}.card,.panel,.hero{border-radius:24px}}
+
+/* v8.1 UX refinements */
+.links .gmaps{display:inline-flex;flex-direction:column;gap:1px;align-items:center;line-height:1.05;font-weight:650;}
+.links .gmaps small,.detailActions .gmaps small{font-size:.68rem;font-weight:400;letter-spacing:.01em;opacity:.74;text-transform:none;}
+.detailActions .gmaps{display:inline-flex;flex-direction:column;gap:1px;align-items:center;line-height:1.08;}
+.ratingLine.disabled{opacity:.42;filter:saturate(.65);}
+.ratingLine.disabled .ratingBtn{cursor:not-allowed;}
+.mutedHint{font-size:.78rem;opacity:.72;margin-top:6px;font-weight:400;}
+.toggleBtn.ignore.on{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.5);color:#fff;}
+.dateGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.dateGrid label{display:flex;flex-direction:column;gap:6px;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase;opacity:.9;}
+.dateGrid input{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);border-radius:14px;color:#fff;padding:12px;font:inherit;text-transform:none;letter-spacing:0;}
+.oneWayHint{margin:10px 0;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,194,71,.45);background:rgba(255,179,0,.12);color:#fff7d9;font-size:.93rem;line-height:1.35;}
+.mapInfo,.detailCard{color:rgba(246,252,248,.94);}
+.mapInfo .layerHint,.detailCard .layerHint{color:rgba(236,246,240,.82);}
+@media(max-width:520px){.dateGrid{grid-template-columns:1fr}.links .gmaps small{font-size:.62rem}}
