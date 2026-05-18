@@ -1,5 +1,3 @@
-Madeira PR Explorer v7.0 · 18.05.2026
+PR Explorer Madeira v7.1
 
-- POI-Daten aus Excel eingebettet
-- 35 deduplizierte GPX-Tracks eingebettet
-- iOS/PWA Layout neu gebaut
+Fehlerbereinigte PWA mit stabilerer Karte, GPX-Tracks, Ergebnisliste, Version sichtbar und globaler Startbasis.
