@@ -1,3 +1,3 @@
-# Madeira PR Explorer v8.6
+# Madeira PR Explorer v8.7
 
 Fehlerkorrektur Detail-Button, OSM-Übersicht und GPX-Trackkarte.
