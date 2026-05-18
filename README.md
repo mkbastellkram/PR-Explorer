@@ -1,2 +1,4 @@
-Madeira PR Explorer v7.4
-Fehlerbereinigte Kartenansicht: Karte nur im Vollbild-Detail, Dashboard ohne Inline-Map.
+Madeira PR Explorer v8.0
+- Dark green AeroGlass UI
+- status dots, favorite heart, ratings, local notes
+- local user state key: pr-user-state-v1
