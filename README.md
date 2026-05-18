@@ -1,3 +1,3 @@
-Madeira PR Explorer v8.2
+# Madeira PR Explorer v8.3
 
-Korrektur: geplante Fahrzeit gerundet, Anfahrt weniger fett, Detailbutton robuster.
+Fehlerkorrektur Detail-Button, OSM-Übersicht und GPX-Trackkarte.
