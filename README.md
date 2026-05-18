@@ -1,4 +1,5 @@
-Madeira Wanderplaner v4
+Madeira PR Explorer v7.0 · 18.05.2026
 
-Fixes: iPhone viewport width, safer default filter reset on load, map resize handling.
-Upload all files to repository root and let GitHub Pages deploy from main / root.
+- POI-Daten aus Excel eingebettet
+- 35 deduplizierte GPX-Tracks eingebettet
+- iOS/PWA Layout neu gebaut
