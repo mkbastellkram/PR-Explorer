@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Madeira">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Madeira Wanderplaner v3</title>
+<title>Madeira Wanderplaner v4</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQglG4kMZ4hNF1ZQFt27Yj1v2GIFtDA=" crossorigin="">
 <style>
 :root{--bg:#f5f7f3;--card:rgba(255,255,255,.86);--line:rgba(15,23,42,.12);--text:#101828;--muted:#667085;--green:#08785f;--green2:#0b6b57;--blue:#007aff;--shadow:0 20px 60px rgba(15,23,42,.16);--radius:28px;--tabbar:76px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);}
@@ -25,7 +25,40 @@
 .toast{position:fixed;left:18px;right:18px;bottom:calc(env(safe-area-inset-bottom) + 20px);z-index:99;border-radius:20px;background:rgba(16,24,40,.92);color:white;padding:14px 16px;font-weight:750;box-shadow:0 18px 50px rgba(0,0,0,.25);transform:translateY(130%);transition:.25s} .toast.show{transform:translateY(0)}
 .leaflet-control-attribution{font-size:10px} .leaflet-popup-content-wrapper{border-radius:18px} .leaflet-popup-content{font-family:inherit}
 @media (min-width:760px){.app{grid-template-columns:1.2fr .8fr;grid-template-rows:auto minmax(0,1fr)}.topbar{grid-column:1/-1}.map-card{grid-column:1;grid-row:2;height:auto}.sheet{grid-column:2;grid-row:2;min-height:0}}
-@media (max-height:720px){h1{font-size:28px}.app{grid-template-rows:auto clamp(210px,30dvh,260px) minmax(0,1fr)}.map-card{min-height:0h2{font-size:24px}.sheet-head{padding-top:4px}.controls{gap:8px}.search{height:48px}}
+@media (max-height:720px){h1{font-size:28px}.app{grid-template-rows:auto clamp(210px,30dvh,260px) minmax(0,1fr)}.map-card{min-height:0}h2{font-size:24px}.sheet-head{padding-top:4px}.controls{gap:8px}.search{height:48px}}
+
+/* v4 iPhone viewport fixes */
+html,body{width:100%;max-width:100%;overflow-x:hidden;}
+.app{width:100%;max-width:100%;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));}
+.topbar{width:100%;min-width:0;overflow:hidden;padding:12px 12px;border-radius:26px;}
+.brand{min-width:0;overflow:hidden;}
+.eyebrow{font-size:11px;letter-spacing:.10em;overflow:hidden;text-overflow:ellipsis;}
+h1{font-size:clamp(26px,8.5vw,34px);line-height:1.0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.top-actions{flex:0 0 auto;max-width:46%;overflow:hidden;}
+.pill{padding:11px 13px;font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+#installHelp{display:none;}
+.map-card{width:100%;max-width:100%;contain:layout paint;}
+#map{width:100% !important;height:100% !important;}
+.sheet{width:100%;max-width:100%;}
+.controls,.sheet-head,.list{min-width:0;}
+.search,.grid,.ranges{width:100%;min-width:0;}
+.grid,.ranges{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+select,input{min-width:0;}
+@media (max-width:430px){
+  .app{grid-template-rows:auto clamp(220px,31dvh,285px) minmax(0,1fr);gap:10px;}
+  .top-actions{max-width:34%;}
+  .pill{padding:10px 12px;font-size:0;}
+  .pill::after{font-size:14px;}
+  #resetBtn::after{content:'Reset';}
+  h2{font-size:clamp(24px,7.2vw,30px);}
+  .counter{min-width:58px;font-size:24px;padding:12px;}
+  .sheet-head{padding-left:14px;padding-right:14px;}
+  .controls{padding-left:14px;padding-right:14px;}
+  .rangebox{padding:10px;}
+  .rline{font-size:12px;}
+}
+@media (display-mode: standalone){#installHelp{display:none!important}.top-actions{max-width:34%;}}
+
 </style>
 </head>
 <body>
@@ -106,7 +139,8 @@ function apply(){ state.q=els.q.value; state.region=els.region.value; state.leve
 function reset(){els.q.value='';els.region.value='';els.level.value='';els.drive.value=90;els.walk.value=480;els.noPorto.checked=true;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.quick==='all'));apply();fit(filtered());}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),4200)}
 function bind(){['input','change'].forEach(ev=>{els.q.addEventListener(ev,apply);els.region.addEventListener(ev,apply);els.level.addEventListener(ev,apply);els.drive.addEventListener(ev,apply);els.walk.addEventListener(ev,apply);els.noPorto.addEventListener(ev,apply);});$('#resetBtn').addEventListener('click',reset);$('#fitBtn').addEventListener('click',()=>fit(filtered()));document.querySelectorAll('.chip[data-quick]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.chip[data-quick]').forEach(x=>x.classList.remove('active'));b.classList.add('active');els.level.value=b.dataset.quick==='all'?'':b.dataset.quick;apply();}));$('#installHelp').addEventListener('click',()=>toast('Für ein Homescreen-Icon: Diese App über Safari per HTTPS öffnen, Teilen-Symbol antippen und „Zum Home-Bildschirm“ wählen. Aus der Dateien-App geht das nicht zuverlässig.'));}
-function boot(){try{options();initMap();bind();apply();setTimeout(()=>fit(filtered()),500);els.status.textContent=`${filtered().length} von ${POIS.length} Touren/POIs`; if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch(e){console.error(e);els.status.textContent='Fehler beim Laden';els.list.innerHTML='<div class="empty"><b>App-Fehler</b>'+e.message+'</div>';}}
+function setDefaultControls(){els.q.value='';els.region.value='';els.level.value='';els.drive.value=90;els.walk.value=480;els.noPorto.checked=true;document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.quick==='all'));}
+function boot(){try{options();setDefaultControls();initMap();bind();apply();requestAnimationFrame(()=>{ if(map) map.invalidateSize(false); });setTimeout(()=>fit(filtered()),700);els.status.textContent=`${filtered().length} von ${POIS.length} Touren/POIs`; if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});}catch(e){console.error(e);els.status.textContent='Fehler beim Laden';els.list.innerHTML='<div class="empty"><b>App-Fehler</b>'+e.message+'</div>';}}
 document.addEventListener('DOMContentLoaded', boot);
 </script>
 </body>
