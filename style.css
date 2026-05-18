@@ -75,3 +75,9 @@ html,body{background:radial-gradient(circle at 20% 0%,rgba(50,126,91,.40),transp
 .mapInfo,.detailCard{color:rgba(246,252,248,.94);}
 .mapInfo .layerHint,.detailCard .layerHint{color:rgba(236,246,240,.82);}
 @media(max-width:520px){.dateGrid{grid-template-columns:1fr}.links .gmaps small{font-size:.62rem}}
+
+/* v8.2 micro fixes */
+.driveValue{font-weight:520!important;line-height:1.22;word-break:normal;}
+.detailFact .driveValue{font-weight:520!important;}
+.detailScreen[hidden]{display:none!important;}
+.detailScreen{display:block;}
