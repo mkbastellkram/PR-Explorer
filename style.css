@@ -83,6 +83,6 @@ html,body{background:radial-gradient(circle at 20% 0%,rgba(50,126,91,.40),transp
 .detailScreen{display:block;}
 
 
-/* v8.3 fixes */
+/* v8.4 fixes */
 .mapInfo{color:rgba(248,255,250,.96)!important;background:rgba(7,27,21,.82)!important;border-color:rgba(255,255,255,.22)!important;line-height:1.35}
 .mapInfo .mapText{color:rgba(248,255,250,.94);font-weight:460;margin:4px 0 8px}.mapInfo b{font-weight:620}.mapInfoHead span{color:#f8fff9}.mapInfo .layerHint{color:rgba(236,246,240,.84)!important}.mapInfo .profileBox{background:rgba(255,255,255,.14)!important;color:#f7fff8!important;border-color:rgba(255,255,255,.18)!important}.detailScreen{z-index:3000!important}.modal-open{overflow:hidden}.links .link[data-detail]{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.22)}
