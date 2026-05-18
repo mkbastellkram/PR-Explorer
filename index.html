@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f4f8f2">
 <meta name="robots" content="noindex,nofollow">
-<title>Madeira PR Explorer v7.7</title>
-<link rel="manifest" href="manifest.webmanifest?v=7.7">
-<link rel="apple-touch-icon" href="icon-180.png?v=7.7">
+<title>Madeira PR Explorer v7.8</title>
+<link rel="manifest" href="manifest.webmanifest?v=7.8">
+<link rel="apple-touch-icon" href="icon-180.png?v=7.8">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=7.7">
+<link rel="stylesheet" href="style.css?v=7.8">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script defer src="app.js?v=7.7"></script>
+<script defer src="app.js?v=7.8"></script>
 </head>
 <body>
 <main class="app-shell">
@@ -21,7 +21,7 @@
       <h1>PR Explorer</h1>
       <div class="small">Startbasis: <strong id="baseLabelTop">Pestana Promenade</strong></div>
     </div>
-    <div class="version">v7.7</div>
+    <div class="version">v7.8</div>
   </header>
 
   <section class="panel filters" aria-label="Filter">
@@ -29,15 +29,23 @@
     <input id="q" class="search" type="search" placeholder="Suche: PR1, Fanal, Levada, Region ..." autocomplete="off">
     <div class="grid2">
       <label class="field"><span>Region</span><select id="region"></select></label>
-      <label class="field levelField"><span>Level</span><select id="level" aria-hidden="true" tabindex="-1"><option value="all">Alle Level</option><option value="leicht">leicht</option><option value="mittel">mittel</option><option value="schwer">schwer</option><option value="k.a.">k.A.</option></select><div class="levelHint">Mehrfachauswahl über die Level-Chips</div></label>
+      <div class="field levelField"><span>Level</span><select id="level" aria-hidden="true" tabindex="-1"><option value="all">Alle Level</option><option value="leicht">leicht</option><option value="mittel">mittel</option><option value="schwer">schwer</option><option value="k.a.">k.A.</option></select></div>
     </div>
     <div class="chips" id="chips">
       <button data-level="all" class="active" aria-pressed="true">Alle</button><button data-level="leicht" aria-pressed="false">Leicht</button><button data-level="mittel" aria-pressed="false">Mittel</button><button data-level="schwer" aria-pressed="false">Schwer</button><button data-level="k.a." aria-pressed="false">k.A.</button>
     </div>
-    <div class="grid3">
-      <label class="range"><div><span>max. Anfahrt km</span><b id="driveKmOut">alle</b></div><input id="driveKm" type="range" min="5" max="120" step="5" value="120"></label>
-      <label class="range"><div><span>max. Anfahrt Zeit</span><b id="driveMinOut">alle</b></div><input id="driveMin" type="range" min="5" max="120" step="5" value="120"></label>
-      <label class="range"><div><span>max. Wanderzeit</span><b id="hikeMinOut">alle</b></div><input id="hikeMin" type="range" min="30" max="600" step="15" value="600"></label>
+    <div class="grid3 rangeGrid">
+      <div class="dualRange" data-filter="driveKm"><div><span>Anfahrt km</span><b id="driveKmOut">alle</b></div><div class="dualSlider"><input id="driveKmMin" type="range" min="0" max="120" step="5" value="0"><input id="driveKmMax" type="range" min="0" max="120" step="5" value="120"></div></div>
+      <div class="dualRange" data-filter="driveMin"><div><span>Anfahrt Zeit</span><b id="driveMinOut">alle</b></div><div class="dualSlider"><input id="driveMinMin" type="range" min="0" max="120" step="5" value="0"><input id="driveMinMax" type="range" min="0" max="120" step="5" value="120"></div></div>
+      <div class="dualRange" data-filter="hikeMin"><div><span>Wanderzeit</span><b id="hikeMinOut">alle</b></div><div class="dualSlider"><input id="hikeMinMin" type="range" min="0" max="600" step="15" value="0"><input id="hikeMinMax" type="range" min="0" max="600" step="15" value="600"></div></div>
+    </div>
+    <div class="filterGroup">
+      <span class="filterLabel">Status</span>
+      <div class="chips statusChips" id="statusChips"><button data-status="all" class="active">Alle</button><button data-status="open">Offen</button><button data-status="limited">Eingeschränkt</button><button data-status="closed">Geschlossen</button><button data-status="hideClosed">Rot ausblenden</button></div>
+    </div>
+    <div class="filterGroup">
+      <span class="filterLabel">Meine Planung</span>
+      <div class="chips planChips" id="planChips"><button data-plan="all" class="active">Alle</button><button data-plan="fav">Favoriten</button><button data-plan="todo">Todo</button><button data-plan="done">Erledigt</button></div>
     </div>
     <div class="checkLine"><span>Porto Santo ausblenden</span><input id="hidePorto" type="checkbox" checked></div>
     <details class="baseBox">
@@ -57,7 +65,7 @@
     </div>
   </section>
 
-  <div class="summary"><span id="summaryLeft">0 Treffer</span><strong id="summaryRight">v7.7</strong></div>
+  <div class="summary"><span id="summaryLeft">0 Treffer</span><strong id="summaryRight">v7.8</strong></div>
   <section id="results" class="results" aria-live="polite"></section>
 </main>
 
@@ -78,6 +86,6 @@
   <div id="detailBody" class="detailBody"></div>
 </section>
 <div id="toast" class="toast"></div>
-<div class="versionFixed">v7.7 · 18.05.2026</div>
+<div class="versionFixed">v7.8 · 18.05.2026</div>
 </body>
 </html>
