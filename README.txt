@@ -1,4 +1,5 @@
-Madeira PR Explorer v10.3
-
-Start: index.html im Browser öffnen.
-Änderungen: sichtbare Versionsnummer auf v10.3 korrigiert, State-Key auf v10_3 gesetzt, PR9 enthalten.
+Madeira PR Explorer v10.4
+Konsolidiert aus PR – V1.xlsx, GPX-Wandertracks und KML-Anfahrten.
+POIs: 40
+GPX-Tracks: 35
+KML-Anfahrten: 37
