@@ -1,3 +1,3 @@
-# Madeira PR Explorer v8.8
+Madeira PR Explorer v9.0
 
-Fehlerkorrektur Detail-Button, OSM-Übersicht und GPX-Trackkarte.
+Abdeckungskarte fuer geplante und erledigte PR-Touren.
