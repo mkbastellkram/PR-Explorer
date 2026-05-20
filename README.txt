@@ -1,3 +1,1 @@
-Madeira PR Explorer v11.4 stabilisiert
-Alle Dateien in das GitHub-Repository hochladen.
-Öffnen mit: ?v=11.4
+Madeira PR Explorer v11.5 - Fullscreen map + detail layout + GPX elevation profiles. Upload all files to GitHub Pages.
