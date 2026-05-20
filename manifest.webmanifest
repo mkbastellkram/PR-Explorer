@@ -1,15 +1,28 @@
 {
-  "name": "Madeira PR Explorer",
+  "name": "Madeira PR Explorer v11.3",
   "short_name": "PR Explorer",
   "description": "Offizielle Wanderwege Madeira – Planung & Buchung",
-  "start_url": "./",
+  "start_url": "./?v=11.3",
   "display": "standalone",
   "background_color": "#050e09",
   "theme_color": "#050e09",
   "orientation": "portrait",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png"},
-    {"src":"icon-180.png","sizes":"180x180","type":"image/png","purpose":"apple-touch-icon"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple-touch-icon"
+    }
   ]
 }
