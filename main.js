@@ -731,6 +731,7 @@ function renderSettings() {
         <div class="settings-row"><label>Track-Farbe</label><input type="color" id="sPrColor" value="${state.style.prColor}"></div>
         <div class="settings-row"><label>Track-Stärke</label><input type="number" id="sPrWeight" min="1" max="8" value="${state.style.prWeight}"></div>
         <div class="settings-row"><label>Anfahrt-Farbe</label><input type="color" id="sDriveColor" value="${state.style.driveColor}"></div>
+        <div class="settings-row"><label>Anfahrt-Stärke</label><input type="number" id="sDriveWeight" min="1" max="8" value="${state.style.driveWeight}"></div>
         <div class="settings-row"><label>Anfahrt-Linienart</label><select id="sDriveDash"><option value="">durchgezogen</option><option value="6,6">gestrichelt</option><option value="2,8">gepunktet</option></select></div>
         <div class="settings-row"><label>Heatmap-Farbe</label><input type="color" id="sHeatColor" value="${state.style.heatColor}"></div>
       </div>
@@ -765,6 +766,7 @@ function renderSettings() {
   $('#sPrColor')?.addEventListener('input', e => { state.style.prColor=e.target.value;    save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sPrWeight')?.addEventListener('input',e => { state.style.prWeight=+e.target.value;  save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sDriveColor')?.addEventListener('input',e=>{ state.style.driveColor=e.target.value; save(); if(currentTab==='map') drawMap(applyFilters()); });
+  $('#sDriveWeight')?.addEventListener('input',e=>{ state.style.driveWeight=parseInt(e.target.value)||2; save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sDriveDash') && ($('#sDriveDash').value = state.style.driveDash || '6,6');
   $('#sDriveDash')?.addEventListener('change',e=>{ state.style.driveDash=e.target.value; save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sHeatColor')?.addEventListener('input', e=>{ state.style.heatColor=e.target.value;  save(); if(currentTab==='map') drawMap(applyFilters()); });
