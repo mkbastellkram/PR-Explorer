@@ -1,8 +1,8 @@
 {
-  "name": "Madeira PR Explorer v11.3",
+  "name": "Madeira PR Explorer v11.4",
   "short_name": "PR Explorer",
   "description": "Offizielle Wanderwege Madeira – Planung & Buchung",
-  "start_url": "./?v=11.3",
+  "start_url": "./?v=11.4",
   "display": "standalone",
   "background_color": "#050e09",
   "theme_color": "#050e09",

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PR Explorer">
 <meta name="theme-color" content="#050e09">
-<title>Madeira PR Explorer v11.3</title>
+<title>Madeira PR Explorer v11.4</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -689,6 +689,41 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 
+
+
+/* ===== v11.4 CLEANUP PATCH ===== */
+#app-sub { display:none; }
+#topbar { min-height: calc(var(--safe-top) + 58px); padding-top: calc(var(--safe-top) + 8px); }
+#main { min-height: 0; }
+#tabbar { position: relative; z-index: 220; min-height: calc(var(--tab-h) + var(--safe-bot)); }
+.sheet-overlay { bottom: calc(var(--tab-h) + var(--safe-bot)); }
+.sheet { max-height: calc(100dvh - var(--safe-top) - var(--tab-h) - var(--safe-bot) - 12px); }
+.sheet-tall { max-height: calc(100dvh - var(--safe-top) - var(--tab-h) - var(--safe-bot) - 12px); }
+.sheet-header { padding-top: max(12px, calc(var(--safe-top) + 2px)); }
+.sheet-close { margin-right: 4px; }
+.map-panel { top: calc(var(--safe-top) + 70px); right: 12px; max-height: calc(100% - var(--safe-top) - 92px); }
+#mapControlBtn { top: calc(var(--safe-top) + 70px); }
+#locateBtn { top: calc(var(--safe-top) + 122px); }
+.range-row { margin: 14px 0 4px; padding: 10px 0 2px; border-top: 1px solid var(--line2); }
+.range-row:first-child { border-top: 0; }
+.range-head { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; color:var(--text2); margin-bottom:8px; }
+.range-head b { color:var(--text); font-weight:600; }
+.range-row input[type=range] { width:100%; accent-color: var(--accent); }
+.status-lights { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.status-light { width:28px; height:28px; border-radius:50%; border:2px solid rgba(255,255,255,.18); opacity:.72; }
+.status-light.open { background:#4ade80; }
+.status-light.limited { background:#fbbf24; }
+.status-light.closed { background:#f87171; }
+.status-light.active { opacity:1; box-shadow:0 0 0 4px rgba(255,255,255,.16); border-color:rgba(255,255,255,.75); }
+.detail-fields.two-col { grid-template-columns: 1fr 1fr; }
+.detail-field.full { grid-column: 1 / -1; }
+.detail-field textarea { min-height: 92px; }
+.detail-actions.compact-icons .action-btn.ig,
+.detail-actions.compact-icons .action-btn.yt,
+.detail-actions.compact-icons .action-btn.goog { min-width:44px; padding-left:11px; padding-right:11px; }
+.elevation-svg { width:100%; min-height:100px; display:block; background:rgba(255,255,255,.035); border:1px solid var(--line2); border-radius:14px; padding:6px; }
+.action-btn.danger-lite { border-color: rgba(248,113,113,.35); color:#fca5a5; }
+
 </style>
 </head>
 <body>
@@ -699,7 +734,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
   <header id="topbar">
     <div id="topbar-left">
       <div id="app-title">PR Explorer</div>
-      <div id="app-sub">Madeira · v11.3 · 20.05.2026</div>
+      <div id="app-sub">Madeira</div>
     </div>
     <div id="topbar-right">
       <button id="filterBtn" class="icon-btn" aria-label="Filter">
@@ -821,6 +856,14 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
             <button class="pill-btn" data-region="Südwest (zentral)">Südwest-Mitte</button>
           </div>
         </div>
+        <div class="filter-section">
+          <div class="filter-label">Strecken & Höhen</div>
+          <div class="range-row"><div class="range-head"><span>Anfahrt km</span><b id="rDriveKmLabel">alle</b></div><input type="range" id="rDriveKm" min="0" max="70" step="5" value="0"></div>
+          <div class="range-row"><div class="range-head"><span>Anfahrt Zeit</span><b id="rDriveMinLabel">alle</b></div><input type="range" id="rDriveMin" min="0" max="90" step="5" value="0"></div>
+          <div class="range-row"><div class="range-head"><span>PR-Länge</span><b id="rTrailKmLabel">alle</b></div><input type="range" id="rTrailKm" min="0" max="20" step="1" value="0"></div>
+          <div class="range-row"><div class="range-head"><span>Länge inkl. Rückweg</span><b id="rTotalKmLabel">alle</b></div><input type="range" id="rTotalKm" min="0" max="40" step="1" value="0"></div>
+          <div class="range-row"><div class="range-head"><span>Höhenmeter</span><b id="rEleLabel">alle</b></div><input type="range" id="rEle" min="0" max="1500" step="50" value="0"></div>
+        </div>
       </div>
       <div class="sheet-footer">
         <button id="filterApply" class="primary-btn">Anwenden</button>
@@ -873,15 +916,15 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 // ===== DATA & CONSTANTS =====
 const DATA = JSON.parse(document.getElementById('appdata').textContent);
 const POIS = DATA.pois, TRACKS = DATA.tracks, DRIVES = DATA.drive_routes;
-const STORE = 'madeira_pr_v11';
+const STORE = 'madeira_pr_v11_4';
 const CAL_START = DATA.calendar_start || '2026-06-22';
 const CAL_END   = DATA.calendar_end   || '2026-07-05';
 
 // ===== STATE =====
 const DEFAULT_STATE = {
   base:   { name:'Pestana Promenade', lat:32.6389, lon:-16.9379, factor:1.2, start:CAL_START, end:CAL_END },
-  style:  { prColor:'#2db370', prWeight:3, driveColor:'#4aa3ff', driveWeight:2, heatColor:'#ff7a18', heatWeight:7 },
-  filter: { search:'', level:'all', plan:'all', region:'all' },
+  style:  { prColor:'#2db370', prWeight:3, driveColor:'#4aa3ff', driveWeight:2, driveDash:'6,6', heatColor:'#ff7a18', heatWeight:7 },
+  filter: { search:'', level:'all', plan:'all', region:'all', driveKmMax:0, driveMinMax:0, trailKmMax:0, totalKmMax:0, eleMax:0 },
   map:    { base:'osm', pins:true, tracks:true, drives:true, heat:false, parking:false, selectedPois:null },
   items:  {}
 };
@@ -910,7 +953,7 @@ function loadState() {
 }
 function save() { localStorage.setItem(STORE, JSON.stringify(state)); }
 function getItem(id) {
-  if (!state.items[id]) state.items[id] = { fav:false, planned:false, done:false, plannedAt:'', bookedAt:'', note:'' };
+  if (!state.items[id]) state.items[id] = { fav:false, planned:false, done:false, status:'open', plannedAt:'', bookedAt:'', note:'' };
   return state.items[id];
 }
 
@@ -934,6 +977,26 @@ function socialUrl(kind, p) {
 function shuttleUrl(p) { return 'https://www.google.com/search?q=' + encodeURIComponent(p.num + ' ' + p.name + ' Madeira Shuttle Transfer'); }
 function dateLabel(v) { if (!v) return ''; try { return new Date(v).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',hour:v.includes('T')?'2-digit':undefined,minute:v.includes('T')?'2-digit':undefined}); } catch(e){ return v; } }
 function havKm(a,b) { if(!a||!b)return 0; const R=6371,tr=x=>x*Math.PI/180,dlat=tr(b[0]-a[0]),dlon=tr(b[1]-a[1]),s=Math.sin(dlat/2)**2+Math.cos(tr(a[0]))*Math.cos(tr(b[0]))*Math.sin(dlon/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
+function oneWayGapKm(p) {
+  const t = TRACKS[p.id];
+  if (!t || !t.coords || t.coords.length < 2) return 0;
+  return havKm(t.coords[0], t.coords[t.coords.length-1]);
+}
+function effectiveTrailKm(p) {
+  const base = Number(p.dist_km || (TRACKS[p.id]?.dist_km) || 0);
+  return oneWayGapKm(p) > 0.8 ? base * 2 : base;
+}
+function safeGain(t) {
+  const g = trackGain(t);
+  return { up: Number.isFinite(g.up) ? g.up : null, down: Number.isFinite(g.down) ? g.down : null };
+}
+function rangeLabel(v, suffix) { return !v || Number(v)===0 ? 'alle' : (String(v).replace('.',',') + ' ' + suffix); }
+function withinVacation(v) {
+  if (!v) return true;
+  const d = v.slice(0,10), a = state.base.start || CAL_START, b = state.base.end || CAL_END;
+  return d >= a && d <= b;
+}
+
 function toast(msg) { const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 function dateRange(a,b) { let out=[],d=new Date(a+'T00:00:00'),end=new Date(b+'T00:00:00'); while(d<=end){out.push(d.toISOString().slice(0,10));d.setDate(d.getDate()+1);} return out; }
 function dlFile(name,content,type) { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
@@ -950,6 +1013,11 @@ function applyFilters() {
     if (state.filter.plan === 'done'    && !it.done) return false;
     if (state.filter.plan === 'open'    && (it.done||it.planned||it.plannedAt||it.bookedAt)) return false;
     if (state.filter.region !== 'all'   && p.region !== state.filter.region) return false;
+    if (state.filter.driveKmMax && Number(p.drive_km||0) > Number(state.filter.driveKmMax)) return false;
+    if (state.filter.driveMinMax && Number(plannedMin(p)||0) > Number(state.filter.driveMinMax)) return false;
+    if (state.filter.trailKmMax && Number(p.dist_km||0) > Number(state.filter.trailKmMax)) return false;
+    if (state.filter.totalKmMax && Number(effectiveTrailKm(p)||0) > Number(state.filter.totalKmMax)) return false;
+    if (state.filter.eleMax && Number(p.ele_m||0) > Number(state.filter.eleMax)) return false;
     return true;
   });
 }
@@ -959,6 +1027,7 @@ function filterCount() {
   if (state.filter.plan   !== 'all') n++;
   if (state.filter.region !== 'all') n++;
   if (state.filter.search) n++;
+  ['driveKmMax','driveMinMax','trailKmMax','totalKmMax','eleMax'].forEach(k => { if (Number(state.filter[k]||0)>0) n++; });
   return n;
 }
 function updateFilterBadge() {
@@ -1049,12 +1118,19 @@ function openDetail(p) {
 
   let html = '';
 
-  // Toggle buttons
+  // Status + personal toggles
+  const st = it.status || 'open';
   html += `<div class="detail-section">
+    <div class="detail-section-title">Status</div>
+    <div class="status-lights">
+      <button class="status-light open ${st==='open'?'active':''}" data-status="open" title="offen"></button>
+      <button class="status-light limited ${st==='limited'?'active':''}" data-status="limited" title="eingeschränkt"></button>
+      <button class="status-light closed ${st==='closed'?'active':''}" data-status="closed" title="geschlossen"></button>
+    </div>
     <div class="toggle-row">
-      <button class="action-btn${it.fav?' fav-active':''}" data-toggle="fav">♥ Favorit</button>
       <button class="action-btn${(it.planned||it.plannedAt||it.bookedAt)?' active-toggle':''}" data-toggle="planned">📅 Geplant</button>
       <button class="action-btn${it.done?' done-active':''}" data-toggle="done">✓ Erledigt</button>
+      <button class="action-btn${it.fav?' fav-active':''}" data-toggle="fav">♥ Favorit</button>
     </div>
   </div>`;
 
@@ -1066,7 +1142,7 @@ function openDetail(p) {
       <div class="fact-card"><label>Dauer</label><div>${fmtMin(p.dur_min)}</div></div>
       <div class="fact-card"><label>Höhenunterschied</label><div>${p.ele_m!=null?p.ele_m+' m':'k.A.'}</div></div>
       <div class="fact-card"><label>Max / Min</label><div>${p.ele_high!=null?p.ele_high+' / '+p.ele_low+' m':'k.A.'}</div></div>
-      <div class="fact-card"><label>GPX-Höhenmeter</label><div>${t&&t.profile?('↗ '+trackGain(t).up+' m · ↘ '+trackGain(t).down+' m'):'k.A.'}</div></div>
+      <div class="fact-card"><label>GPX-Höhenmeter</label><div>${t&&t.profile?((safeGain(t).up!=null?'↗ '+safeGain(t).up+' m':'↗ k.A.')+' · '+(safeGain(t).down!=null?'↘ '+safeGain(t).down+' m':'↘ k.A.')):'k.A.'}</div></div>
       <div class="fact-card"><label>Anfahrt ab Hotel</label><div>${fmtKm(p.drive_km)} · ${fmtMin(plannedMin(p))}</div></div>
       <div class="fact-card"><label>Parkplatz / Gebühr</label><div>${esc(p.parking||'–')}${p.fee?' · €'+esc(p.fee):''}</div></div>
     </div>
@@ -1100,15 +1176,18 @@ function openDetail(p) {
   </div>`;
 
   // Planning
+  const minDt = (state.base.start||CAL_START) + 'T00:00';
+  const maxDt = (state.base.end||CAL_END) + 'T23:59';
   html += `<div class="detail-section">
     <div class="detail-section-title">Planung & Buchung</div>
-    <div class="detail-fields">
-      <div class="detail-field"><label>Geplant am</label><input type="datetime-local" id="dPlannedAt" value="${esc(it.plannedAt)}"></div>
-      <div class="detail-field"><label>Gebuchter Slot ✓</label><input type="datetime-local" id="dBookedAt" value="${esc(it.bookedAt)}"></div>
-      <div class="detail-field"><label>Notiz</label><textarea id="dNote" placeholder="Notizen zur Tour…">${esc(it.note)}</textarea></div>
+    <div class="detail-fields two-col">
+      <div class="detail-field"><label>Geplant am</label><input type="datetime-local" id="dPlannedAt" min="${minDt}" max="${maxDt}" value="${esc(it.plannedAt)}"></div>
+      <div class="detail-field"><label>Gebuchter Slot ✓</label><input type="datetime-local" id="dBookedAt" min="${minDt}" max="${maxDt}" value="${esc(it.bookedAt)}"></div>
+      <div class="detail-field full"><label>Notiz</label><textarea id="dNote" placeholder="Notizen zur Tour…">${esc(it.note)}</textarea></div>
     </div>
     <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
       <button class="action-btn primary" id="dSave">Speichern</button>
+      <button class="action-btn danger-lite" id="dClearDates">Termine löschen</button>
       <button class="action-btn" id="dIcs">📅 ICS exportieren</button>
       <button class="action-btn" id="dMap">Auf Karte</button>
     </div>
@@ -1127,15 +1206,21 @@ function openDetail(p) {
       save(); openDetail(p); renderList();
     });
   });
+  $$('#detailBody [data-status]').forEach(btn => {
+    btn.addEventListener('click', () => { const it=getItem(p.id); it.status=btn.dataset.status; save(); openDetail(p); renderList(); if(currentTab==='map') drawMap(applyFilters()); });
+  });
 
   $('#dSave')?.addEventListener('click', () => {
     const it = getItem(p.id);
     it.plannedAt = $('#dPlannedAt')?.value || '';
     it.bookedAt  = $('#dBookedAt')?.value  || '';
     it.note      = $('#dNote')?.value      || '';
+    if (it.plannedAt && !withinVacation(it.plannedAt)) return toast('Geplant liegt außerhalb des Urlaubszeitraums');
+    if (it.bookedAt && !withinVacation(it.bookedAt)) return toast('Slot liegt außerhalb des Urlaubszeitraums');
     if (it.plannedAt || it.bookedAt) it.planned = true;
-    save(); toast('Gespeichert ✓'); openDetail(p); renderList();
+    save(); toast('Gespeichert ✓'); openDetail(p); renderList(); renderCalendar();
   });
+  $('#dClearDates')?.addEventListener('click', () => { const it=getItem(p.id); it.plannedAt=''; it.bookedAt=''; it.planned=false; save(); toast('Termine gelöscht'); openDetail(p); renderList(); renderCalendar(); });
 
   $('#dIcs')?.addEventListener('click', () => downloadIcs(p));
   $('#dMap')?.addEventListener('click', () => {
@@ -1160,12 +1245,15 @@ function trackGain(t) {
 
 function profileSVG(t) {
   if (!t||!t.profile||t.profile.length<2) return '';
-  const w=320,h=80,pad=10;
-  const xmax = t.profile[t.profile.length-1][0] || 1;
-  const ymin = t.ele_min ?? Math.min(...t.profile.map(p=>p[1]));
-  const ymax = t.ele_max ?? Math.max(...t.profile.map(p=>p[1]));
+  const w=320,h=96,pad=10;
+  const prof = t.profile.map(([x,y]) => [Number(x), Number(y)]).filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (prof.length < 2) return '<div class="oneway-warn">Kein belastbares Höhenprofil vorhanden.</div>';
+  const xmax = prof[prof.length-1][0] || 1;
+  const vals = prof.map(p=>p[1]);
+  const ymin = Number.isFinite(Number(t.ele_min)) ? Number(t.ele_min) : Math.min(...vals);
+  const ymax = Number.isFinite(Number(t.ele_max)) ? Number(t.ele_max) : Math.max(...vals);
   const rng  = ymax - ymin || 1;
-  const pts  = t.profile.map(([x,y]) => [pad+x/xmax*(w-2*pad), h-pad-(y-ymin)/rng*(h-2*pad)]);
+  const pts  = prof.map(([x,y]) => [pad+x/xmax*(w-2*pad), h-pad-(y-ymin)/rng*(h-2*pad)]);
   const line = 'M'+pts.map(p=>p.join(',')).join(' L');
   const fill = line+` L${pts[pts.length-1][0]},${h-pad} L${pts[0][0]},${h-pad} Z`;
   return `<svg class="elevation-svg" viewBox="0 0 ${w} ${h}">
@@ -1192,12 +1280,13 @@ function closeSheet(id) { document.getElementById(id).classList.remove('open'); 
 $('#filterBackdrop').addEventListener('click', () => closeSheet('filterSheet'));
 $('#detailBackdrop').addEventListener('click', () => closeSheet('detailSheet'));
 $('#detailClose').addEventListener('click',    () => closeSheet('detailSheet'));
+let detailSwipeX=null; document.getElementById('detailSheet').addEventListener('touchstart', e=>{ detailSwipeX=e.touches[0].clientX; }, {passive:true}); document.getElementById('detailSheet').addEventListener('touchend', e=>{ if(detailSwipeX!==null && e.changedTouches[0].clientX-detailSwipeX>90) closeSheet('detailSheet'); detailSwipeX=null; }, {passive:true});
 
 // ===== FILTER SHEET =====
 $('#filterBtn').addEventListener('click', () => { syncFilterUI(); openSheet('filterSheet'); });
 
 $('#filterReset').addEventListener('click', () => {
-  state.filter = { search:'', level:'all', plan:'all', region:'all' };
+  state.filter = { search:'', level:'all', plan:'all', region:'all', driveKmMax:0, driveMinMax:0, trailKmMax:0, totalKmMax:0, eleMax:0 };
   $('#search').value = '';
   save(); syncFilterUI(); updateFilterBadge(); renderList();
   if (currentTab==='map') drawMap(applyFilters());
@@ -1213,11 +1302,22 @@ function syncFilterUI() {
   $$('#levelPills  .pill-btn').forEach(b => b.classList.toggle('active', b.dataset.level   === state.filter.level));
   $$('#planPills   .pill-btn').forEach(b => b.classList.toggle('active', b.dataset.plan    === state.filter.plan));
   $$('#regionPills .pill-btn').forEach(b => b.classList.toggle('active', b.dataset.region  === state.filter.region));
+  const map = [
+    ['rDriveKm','driveKmMax','km','rDriveKmLabel'], ['rDriveMin','driveMinMax','min','rDriveMinLabel'],
+    ['rTrailKm','trailKmMax','km','rTrailKmLabel'], ['rTotalKm','totalKmMax','km','rTotalKmLabel'], ['rEle','eleMax','m','rEleLabel']
+  ];
+  map.forEach(([id,key,suf,lid]) => { const el=$('#'+id), lab=$('#'+lid); if(el){el.value=state.filter[key]||0;} if(lab){lab.textContent=rangeLabel(state.filter[key]||0,suf);} });
 }
 
-$$('#levelPills  .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.level  = b.dataset.level;  save(); syncFilterUI(); }));
-$$('#planPills   .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.plan   = b.dataset.plan;   save(); syncFilterUI(); }));
-$$('#regionPills .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.region = b.dataset.region; save(); syncFilterUI(); }));
+$$('#levelPills  .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.level  = b.dataset.level;  state.map.selectedPois=null; save(); syncFilterUI(); }));
+$$('#planPills   .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.plan   = b.dataset.plan;   state.map.selectedPois=null; save(); syncFilterUI(); }));
+$$('#regionPills .pill-btn').forEach(b => b.addEventListener('click', () => { state.filter.region = b.dataset.region; state.map.selectedPois=null; save(); syncFilterUI(); }));
+
+[['rDriveKm','driveKmMax','km','rDriveKmLabel'],['rDriveMin','driveMinMax','min','rDriveMinLabel'],['rTrailKm','trailKmMax','km','rTrailKmLabel'],['rTotalKm','totalKmMax','km','rTotalKmLabel'],['rEle','eleMax','m','rEleLabel']].forEach(([id,key,suf,lid])=>{
+  document.addEventListener('input', e => {
+    if (e.target && e.target.id === id) { state.filter[key] = Number(e.target.value||0); const lab=$('#'+lid); if(lab) lab.textContent = rangeLabel(state.filter[key],suf); save(); updateFilterBadge(); }
+  });
+});
 
 // Search
 $('#search').addEventListener('input', e => {
@@ -1299,6 +1399,8 @@ function initMap() {
 
 function drawMap(arr) {
   if (!mapInstance) return;
+  arr = arr || applyFilters();
+  if (state.map.selectedPois) arr = arr.filter(p => state.map.selectedPois.includes(p.id));
   Object.values(mapLayers).forEach(l => l.clearLayers());
   if (state.map.drives)  drawDrives(arr, false);
   if (state.map.heat)    drawDrives(arr, true);
@@ -1339,7 +1441,7 @@ function drawDrives(arr, heat) {
     const it = getItem(p.id);
     const color = heat ? state.style.heatColor : state.style.driveColor;
     const op    = heat ? (it.done?.6:(it.planned||it.plannedAt||it.bookedAt)?.45:.2) : .55;
-    L.polyline(d.coords, { color, weight: heat?state.style.heatWeight:state.style.driveWeight, opacity:op, dashArray:heat?null:'6,6' }).addTo(heat?mapLayers.heat:mapLayers.drives);
+    L.polyline(d.coords, { color, weight: heat?state.style.heatWeight:state.style.driveWeight, opacity:op, dashArray:heat?null:(state.style.driveDash||'6,6') }).addTo(heat?mapLayers.heat:mapLayers.drives);
   });
 }
 
@@ -1543,6 +1645,7 @@ function renderSettings() {
         <div class="settings-row"><label>Track-Farbe</label><input type="color" id="sPrColor" value="${state.style.prColor}"></div>
         <div class="settings-row"><label>Track-Stärke</label><input type="number" id="sPrWeight" min="1" max="8" value="${state.style.prWeight}"></div>
         <div class="settings-row"><label>Anfahrt-Farbe</label><input type="color" id="sDriveColor" value="${state.style.driveColor}"></div>
+        <div class="settings-row"><label>Anfahrt-Linienart</label><select id="sDriveDash"><option value="">durchgezogen</option><option value="6,6">gestrichelt</option><option value="2,8">gepunktet</option></select></div>
         <div class="settings-row"><label>Heatmap-Farbe</label><input type="color" id="sHeatColor" value="${state.style.heatColor}"></div>
       </div>
     </div>
@@ -1564,7 +1667,7 @@ function renderSettings() {
       </div>
     </div>
     <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:var(--text3)">
-      Madeira PR Explorer v11.3 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
+      Madeira PR Explorer v11.4 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
     </div>`;
 
   $('#sStart')?.addEventListener('change',  e => { state.base.start=e.target.value; save(); });
@@ -1576,6 +1679,8 @@ function renderSettings() {
   $('#sPrColor')?.addEventListener('input', e => { state.style.prColor=e.target.value;    save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sPrWeight')?.addEventListener('input',e => { state.style.prWeight=+e.target.value;  save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sDriveColor')?.addEventListener('input',e=>{ state.style.driveColor=e.target.value; save(); if(currentTab==='map') drawMap(applyFilters()); });
+  $('#sDriveDash') && ($('#sDriveDash').value = state.style.driveDash || '6,6');
+  $('#sDriveDash')?.addEventListener('change',e=>{ state.style.driveDash=e.target.value; save(); if(currentTab==='map') drawMap(applyFilters()); });
   $('#sHeatColor')?.addEventListener('input', e=>{ state.style.heatColor=e.target.value;  save(); if(currentTab==='map') drawMap(applyFilters()); });
 
   $('#exportState')?.addEventListener('click', () => {
