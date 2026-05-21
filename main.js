@@ -2,7 +2,7 @@
 // ===== DATA & CONSTANTS =====
 const DATA = JSON.parse(document.getElementById('appdata').textContent);
 const POIS = DATA.pois, TRACKS = DATA.tracks, DRIVES = DATA.drive_routes;
-const STORE = 'madeira_pr_v11_6';
+const STORE = 'madeira_pr_v12_0';
 const CAL_START = DATA.calendar_start || '2026-06-22';
 const CAL_END   = DATA.calendar_end   || '2026-07-05';
 
@@ -502,7 +502,7 @@ function renderSettings() {
       </div>
     </div>
     <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:var(--text3)">
-      Madeira PR Explorer v11.6 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
+      Madeira PR Explorer v12.0 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
     </div>`;
 
   $('#sStart')?.addEventListener('change',  e => { state.base.start=e.target.value; save(); });
