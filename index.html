@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PR Explorer">
 <meta name="theme-color" content="#050e09">
-<title>Madeira PR Explorer v12.0</title>
+<title>Madeira PR Explorer v12.1</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -279,7 +279,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .leaflet-container { font-family: inherit; background: #0a1a0e; }
 
 .map-fab {
-  position: absolute; z-index: 10;
+  position: absolute; z-index: 70;
   width: 44px; height: 44px;
   border-radius: 14px;
   background: var(--glass);
@@ -726,15 +726,15 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 
 
 /* ===== v12.0 FULLSCREEN MAP + DETAIL REFINEMENT ===== */
-#app.map-mode { display:block; height:100dvh; overflow:hidden; }
+#app.#app.map-mode { display:flex !important; flex-direction:column !important; height:100dvh !important; overflow:hidden !important; position:fixed !important; inset:0 !important; }
 #app.map-mode #topbar { position:fixed; top:0; left:0; right:0; z-index:60; background:linear-gradient(180deg, rgba(5,14,9,.78), rgba(5,14,9,.18), rgba(5,14,9,0)); border-bottom:0; pointer-events:auto; }
 #app.map-mode #searchbar { display:none !important; }
-#app.map-mode #main { position:fixed; inset:0; height:100dvh; z-index:1; }
+#app.map-mode #main { position:fixed !important; inset:0 !important; height:100dvh !important; z-index:1 !important; }
 #app.map-mode #tab-map { position:absolute; inset:0; }
 #app.map-mode #map { position:absolute; inset:0; width:100%; height:100%; min-height:100dvh; }
 #app.map-mode #tabbar { position:fixed; left:0; right:0; bottom:0; z-index:65; background:linear-gradient(180deg, rgba(5,14,9,.58), rgba(5,14,9,.94)); border-top:1px solid rgba(255,255,255,.08); }
-#app.map-mode #mapControlBtn { top:calc(var(--safe-top) + 78px); right:14px; }
-#app.map-mode #locateBtn { top:calc(var(--safe-top) + 132px); right:14px; }
+#app.map-mode #mapControlBtn { top:calc(var(--safe-top) + 72px); right:14px; z-index:70; }
+#app.map-mode #locateBtn { top:calc(var(--safe-top) + 126px); right:14px; z-index:70; }
 #app.map-mode .map-panel { top:calc(var(--safe-top) + 76px); right:66px; max-height:calc(100dvh - var(--safe-top) - var(--tab-h) - var(--safe-bot) - 92px); }
 #app.map-mode .leaflet-control-attribution { margin-bottom:calc(var(--tab-h) + var(--safe-bot) + 2px); }
 .sheet-tall { max-height:calc(100dvh - max(8px, var(--safe-top))); border-radius:28px 28px 0 0; }
@@ -859,6 +859,26 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 #app-title{font-size:18px!important;}
 @media (max-width:430px){#topbar{padding-left:16px!important;padding-right:16px!important}.map-panel{right:62px!important}.sheet-scroll{padding-bottom:8px!important}}
 
+
+/* FIX 5: Filter footer pill */
+#filterSheet .sheet-footer { padding:8px 18px calc(10px + var(--safe-bot)); border-top:none; display:flex; justify-content:center; }
+#filterSheet .primary-btn { width:auto; padding:10px 28px; border-radius:22px; font-size:14px; background:var(--glass3); color:var(--accent); border:1.5px solid var(--accent); font-weight:600; }
+
+/* FIX 6: Range dual slider */
+.range-dual { position:relative; height:36px; display:flex; align-items:center; }
+.range-dual input[type=range] { position:absolute; width:100%; height:4px; background:transparent; -webkit-appearance:none; pointer-events:none; }
+.range-dual input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--accent); border:3px solid var(--bg); box-shadow:0 1px 6px rgba(0,0,0,.4); pointer-events:all; cursor:grab; }
+.range-dual input[type=range]::-webkit-slider-runnable-track { height:4px; background:rgba(255,255,255,.12); border-radius:2px; }
+.range-active-line { position:absolute; height:4px; background:var(--accent); border-radius:2px; z-index:1; pointer-events:none; }
+.range-row { margin-bottom:14px; }
+.range-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:13px; color:var(--text2); }
+.range-head b { color:var(--accent); font-size:12px; font-weight:600; }
+/* Region multi-select */
+.region-multi .pill-btn.active { background:var(--accent-glow); border-color:var(--accent); color:var(--accent); }
+
+/* FIX 7: Safe area — topbar accounts for Dynamic Island exactly */
+#topbar { padding-top: max(var(--safe-top), 14px); }
+#app.map-mode #topbar { padding-top: max(var(--safe-top), 14px); }
 </style>
 </head>
 <body>
@@ -1039,8 +1059,7 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
       <button class="pill-btn" data-base="topo">Topo</button>
       <button class="pill-btn" data-base="sat">Satellit</button>
     </div>
-    <div class="map-panel-header" style="margin-top:12px">Nur anzeigen</div>
-    <div id="mapPoiFilter" class="map-poi-filter"></div>
+    <!-- POI-Selektion über Hauptfilter -->
   </div>
 
   <!-- Toast -->
@@ -1491,8 +1510,15 @@ function switchTab(tab) {
   if (sb) sb.style.display = (tab === 'list') ? '' : 'none';
 
   if (tab === 'map') {
-    setTimeout(() => { initMap(); if (mapInstance) { mapInstance.invalidateSize(); drawMap(applyFilters()); } }, 80);
-    setTimeout(() => { if (mapInstance) { mapInstance.invalidateSize(); drawMap(applyFilters()); } }, 350);
+    // map-mode class already toggled above — now wait 2 frames for CSS to apply
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      initMap();
+      if (mapInstance) {
+        mapInstance.invalidateSize(true);
+        drawMap(applyFilters());
+        setTimeout(() => mapInstance.invalidateSize(true), 300);
+      }
+    }));
   }
   if (tab === 'calendar') renderCalendar();
   if (tab === 'settings') renderSettings();
@@ -1534,6 +1560,17 @@ function initMap() {
   mapLayers.drives  = L.layerGroup().addTo(mapInstance);
   mapLayers.heat    = L.layerGroup().addTo(mapInstance);
   mapLayers.parking = L.layerGroup().addTo(mapInstance);
+
+  // Raise Leaflet attribution bar z-index
+  setTimeout(() => {
+    const attr = document.querySelector('.leaflet-control-attribution');
+    if (attr) { attr.style.zIndex = '66'; }
+    // Ensure map container click closes panel
+    const mc = document.getElementById('map');
+    if (mc) mc.addEventListener('click', (e) => {
+      if (mapPanelOpen && !e.target.closest('.map-panel') && !e.target.closest('.map-fab')) toggleMapPanel();
+    }, {capture: false});
+  }, 200);
 }
 
 function drawMap(arr) {
@@ -1619,7 +1656,12 @@ document.getElementById('map').addEventListener('click', () => { if (mapPanelOpe
 
 function toggleMapPanel() {
   mapPanelOpen = !mapPanelOpen;
-  $('#mapPanel').classList.toggle('hidden', !mapPanelOpen);
+  const panel = document.getElementById('mapPanel');
+  if (panel) {
+    panel.classList.toggle('hidden', !mapPanelOpen);
+    // Ensure controls are never covered
+    panel.style.pointerEvents = mapPanelOpen ? 'all' : 'none';
+  }
   if (mapPanelOpen) renderMapPanel();
 }
 
@@ -1631,17 +1673,8 @@ function renderMapPanel() {
   $('#ovParking').checked = state.map.parking;
   $$('#mapPanel [data-base]').forEach(b => b.classList.toggle('active', b.dataset.base === (state.map.base||'osm')));
 
-  // POI checklist – show planned first, then all from filter
-  const filteredArr = applyFilters();
-  const showList = filteredArr.slice(0, 20);
-  $('#mapPoiFilter').innerHTML = showList.map(p => {
-    const it = getItem(p.id);
-    const isPlan = it.planned||it.plannedAt||it.bookedAt;
-    const checked = !state.map.selectedPois || state.map.selectedPois.includes(p.id);
-    return `<label class="poi-filter-row${isPlan?' planned-item':''}">
-      <input type="checkbox" data-poi="${p.id}" ${checked?'checked':''}>${esc(p.num)} ${esc(p.name)}
-    </label>`;
-  }).join('');
+  // POI individual filter removed – use main filter
+  const mpf = document.getElementById('mapPoiFilter'); if(mpf) mpf.innerHTML = '';
 
   $$('#mapPoiFilter input[type=checkbox]').forEach(cb => cb.addEventListener('change', () => {
     const allPois   = $$('#mapPoiFilter input[type=checkbox]').map(x=>x.dataset.poi);
@@ -1806,7 +1839,7 @@ function renderSettings() {
       </div>
     </div>
     <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:var(--text3)">
-      Madeira PR Explorer v12.0 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
+      Madeira PR Explorer v12.1 · ${POIS.length} Touren · ${Object.keys(TRACKS).length} GPX · ${Object.keys(DRIVES).length} Anfahrten
     </div>`;
 
   $('#sStart')?.addEventListener('change',  e => { state.base.start=e.target.value; save(); });
@@ -2035,6 +2068,7 @@ window.addEventListener('resize', () => { if (mapInstance) setTimeout(()=>mapIns
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
+
 
 </script>
 </body>
