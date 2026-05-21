@@ -1,4 +1,4 @@
-const CACHE='madeira-pr-v12-1';
+const CACHE='madeira-pr-v12-2';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('madeira-pr-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
